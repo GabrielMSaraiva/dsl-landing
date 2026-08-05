@@ -1,0 +1,214 @@
+<svg
+  data-integration-flow
+  aria-hidden="true"
+  focusable="false"
+  preserveAspectRatio="none"
+>
+  <defs>
+    <filter id="integration-flow-glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"></feGaussianBlur>
+      <feMerge>
+        <feMergeNode in="blur"></feMergeNode>
+        <feMergeNode in="SourceGraphic"></feMergeNode>
+      </feMerge>
+    </filter>
+  </defs>
+  <g data-integration-lines></g>
+</svg>
+
+<script>
+  const svgNamespace = "http://www.w3.org/2000/svg";
+
+  const initializeIntegrationFlow = (stage: HTMLElement) => {
+    const svg = stage.querySelector("[data-integration-flow]");
+    const lines = stage.querySelector("[data-integration-lines]");
+    const core = stage.querySelector("[data-integration-core]");
+    const cards = [...stage.querySelectorAll("[data-integration-card]")];
+
+    if (!(svg instanceof SVGSVGElement) || !(lines instanceof SVGGElement) || !(core instanceof HTMLElement)) return;
+    if (!cards.every((card) => card instanceof HTMLElement)) return;
+
+    let drawFrame = 0;
+
+    const localRect = (element: HTMLElement) => {
+      let x = 0;
+      let y = 0;
+      let node: HTMLElement | null = element;
+
+      while (node && node !== stage) {
+        x += node.offsetLeft;
+        y += node.offsetTop;
+        node = node.offsetParent instanceof HTMLElement ? node.offsetParent : null;
+      }
+
+      if (node === stage) {
+        return { x, y, width: element.offsetWidth, height: element.offsetHeight };
+      }
+
+      const stageRect = stage.getBoundingClientRect();
+      const rect = element.getBoundingClientRect();
+      return {
+        x: rect.left - stageRect.left,
+        y: rect.top - stageRect.top,
+        width: rect.width,
+        height: rect.height,
+      };
+    };
+
+    const createPath = (className: string, data: string, index: number) => {
+      const path = document.createElementNS(svgNamespace, "path");
+      path.setAttribute("d", data);
+      path.setAttribute("pathLength", "1");
+      path.setAttribute("class", className);
+      path.setAttribute("vector-effect", "non-scaling-stroke");
+      path.style.setProperty("--flow-delay", String(index));
+      return path;
+    };
+
+    const draw = () => {
+      drawFrame = 0;
+      const width = stage.offsetWidth;
+      const height = stage.offsetHeight;
+      if (!width || !height) return;
+
+      svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
+      const coreRect = localRect(core);
+      const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+      const isTablet = window.matchMedia("(min-width: 640px)").matches;
+      const selectedCards = cards.filter((card) => {
+        if (!(card instanceof HTMLElement)) return false;
+        const side = card.dataset.flowSide;
+        const index = Number(card.dataset.flowIndex);
+
+        if (isDesktop) return side === "source" ? index % 2 === 1 : index % 2 === 0;
+        if (isTablet) return side === "source" ? index >= 4 : index < 4;
+        return side === "source" ? index >= 6 : index < 2;
+      });
+
+      const fragment = document.createDocumentFragment();
+
+      selectedCards.forEach((card, index) => {
+        if (!(card instanceof HTMLElement)) return;
+        const cardRect = localRect(card);
+        let startX: number;
+        let startY: number;
+        let endX: number;
+        let endY: number;
+        let data: string;
+
+        if (isDesktop) {
+          const isLeft = card.dataset.flowSide === "source";
+          endX = isLeft ? cardRect.x + cardRect.width : cardRect.x;
+          endY = cardRect.y + cardRect.height / 2;
+          startX = isLeft ? coreRect.x : coreRect.x + coreRect.width;
+          startY = Math.min(
+            coreRect.y + coreRect.height - 14,
+            Math.max(coreRect.y + 14, endY),
+          );
+          const direction = isLeft ? -1 : 1;
+          const distance = Math.abs(endX - startX);
+          const firstControlX = startX + direction * Math.max(18, distance * 0.48);
+          const secondControlX = endX - direction * Math.max(12, distance * 0.28);
+          data = `M ${startX} ${startY} C ${firstControlX} ${startY}, ${secondControlX} ${endY}, ${endX} ${endY}`;
+        } else {
+          const isAbove = card.dataset.flowSide === "source";
+          endX = cardRect.x + cardRect.width / 2;
+          endY = isAbove ? cardRect.y + cardRect.height : cardRect.y;
+          startX = Math.min(
+            coreRect.x + coreRect.width - 14,
+            Math.max(coreRect.x + 14, endX),
+          );
+          startY = isAbove ? coreRect.y : coreRect.y + coreRect.height;
+          const direction = isAbove ? -1 : 1;
+          const distance = Math.abs(endY - startY);
+          const firstControlY = startY + direction * Math.max(18, distance * 0.48);
+          const secondControlY = endY - direction * Math.max(12, distance * 0.28);
+          data = `M ${startX} ${startY} C ${startX} ${firstControlY}, ${endX} ${secondControlY}, ${endX} ${endY}`;
+        }
+
+        const base = createPath("integration-flow__base", data, index);
+        const pulse = createPath("integration-flow__pulse", data, index);
+        pulse.dataset.flowSide = card.dataset.flowSide ?? "";
+        pulse.dataset.flowIndex = card.dataset.flowIndex ?? "";
+        pulse.dataset.flowStart = `${startX},${startY}`;
+        pulse.dataset.flowEnd = `${endX},${endY}`;
+        fragment.append(base, pulse);
+      });
+
+      lines.replaceChildren(fragment);
+    };
+
+    const scheduleDraw = () => {
+      if (drawFrame) cancelAnimationFrame(drawFrame);
+      drawFrame = requestAnimationFrame(draw);
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleDraw);
+    resizeObserver.observe(stage);
+    resizeObserver.observe(core);
+    for (const card of cards) {
+      if (card instanceof HTMLElement) resizeObserver.observe(card);
+    }
+
+    window.addEventListener("resize", scheduleDraw, { passive: true });
+    document.fonts?.ready.then(scheduleDraw);
+    scheduleDraw();
+  };
+
+  for (const stage of document.querySelectorAll("[data-integration-stage]")) {
+    if (stage instanceof HTMLElement) initializeIntegrationFlow(stage);
+  }
+</script>
+
+<style is:global>
+  [data-integration-flow] {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  [data-integration-flow] path {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  [data-integration-flow] .integration-flow__base {
+    stroke: color-mix(in oklab, var(--cyan) 42%, transparent);
+    stroke-width: 1;
+    opacity: 0.3;
+  }
+
+  [data-integration-flow] .integration-flow__pulse {
+    stroke: var(--signal);
+    stroke-width: 2;
+    stroke-dasharray: 0.14 0.86;
+    stroke-dashoffset: 1;
+    opacity: 0.9;
+    filter: url("#integration-flow-glow");
+    animation: integration-flow-pulse 3.4s linear infinite;
+    animation-delay: calc(var(--flow-delay) * 160ms);
+    animation-fill-mode: backwards;
+  }
+
+  @keyframes integration-flow-pulse {
+    from {
+      stroke-dashoffset: 1;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-integration-flow] .integration-flow__pulse {
+      animation: none !important;
+      opacity: 0;
+    }
+  }
+</style>

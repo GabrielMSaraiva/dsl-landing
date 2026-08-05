@@ -1,0 +1,30 @@
+---
+import Demo from "../components/site/Demo.astro";
+import Features from "../components/site/Features.astro";
+import Footer from "../components/site/Footer.astro";
+import Header from "../components/site/Header.astro";
+import Hero from "../components/site/Hero.astro";
+import Integrations from "../components/site/Integrations.astro";
+import Pillars from "../components/site/Pillars.astro";
+import Toast from "../components/site/Toast.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const title = "Dev Stream Labs — Automated DevOps for Compiled Codebases";
+const description =
+  "Fewer failed builds, fewer blockers, more shipped products. Automated cross-platform build pipelines with AI-powered failure analysis.";
+---
+
+<BaseLayout {title} {description}>
+  <div class="min-h-screen bg-background">
+    <Header />
+    <main id="platform">
+      <Hero />
+      <Pillars />
+      <Features />
+      <Integrations />
+      <Demo />
+    </main>
+    <Footer />
+    <Toast />
+  </div>
+</BaseLayout>

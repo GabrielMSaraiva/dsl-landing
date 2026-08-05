@@ -1,0 +1,184 @@
+---
+import { CircleCheck } from "@lucide/astro";
+import dashboard from "../../assets/dashboard.jpg";
+
+const tabs = [
+  {
+    id: "dx",
+    label: "Developer Experience",
+    heading: "See every build, every commit, every platform — at a glance",
+    lead: "Your builds, commits, and results across Windows, macOS, Linux, and Android. All in one place.",
+    kicker: "Every commit. Every result. One view. No context switching.",
+    points: [
+      ["AI-powered build failure analysis", "Clear, human-readable root causes for broken builds — not raw log dumps."],
+      ["Real-time status across every platform", "Watch all your builds run simultaneously with live log streaming."],
+      ["One-click build actions", "Analyze failures, view logs, download artifacts, or recreate any build instantly."],
+      ["Commit history with full context", "See which files changed, who contributed, and which platforms passed."],
+    ],
+  },
+  {
+    id: "infra",
+    label: "Infrastructure",
+    heading: "Elastic runners that scale with the commit volume, not your ops team",
+    lead: "Dedicated, ephemeral machines per platform. Warm caches, isolated workspaces, zero drift.",
+    kicker: "Provisioned in seconds. Torn down clean. Every single time.",
+    points: [
+      ["Ephemeral, isolated runners", "Every build starts from a known-good image — no snowflake machines."],
+      ["Warm dependency caching", "Shared artifact caches cut compile times on large C++ and Unity projects."],
+      ["Bring your own hardware", "Attach self-hosted runners for console SDKs and licensed toolchains."],
+      ["Zero-config platform matrix", "Add a target platform and the pipeline expands automatically."],
+    ],
+  },
+  {
+    id: "data",
+    label: "Data & Analytics",
+    heading: "Pipeline health as a metric your leadership can actually read",
+    lead: "Build trends, success rates, and commit activity tracked continuously across every project.",
+    kicker: "Measure the pipeline. Then make it faster.",
+    points: [
+      ["Success rate trendlines", "Track regression windows and spot the commit that changed everything."],
+      ["Duration breakdowns per stage", "Find the slow step instead of guessing at the whole pipeline."],
+      ["Contributor insight", "See how changes from each team affect build stability over time."],
+      ["Exportable reporting", "Pipe metrics into your existing dashboards with a single endpoint."],
+    ],
+  },
+];
+---
+
+<section id="features" class="relative border-t border-border/60">
+  <div class="mx-auto max-w-[1400px] px-6 py-28 md:px-10 lg:py-40">
+    <div class="flex flex-col gap-8 border-b border-border pb-6 md:flex-row md:items-end md:justify-between">
+      <div class="reveal" data-visible="false">
+        <h2 class="text-[clamp(2rem,4vw,3rem)] font-bold">Features</h2>
+      </div>
+      <div class="flex flex-wrap gap-6" role="tablist" aria-label="Feature categories">
+        {
+          tabs.map((tab, index) => (
+            <button
+              id={`feature-tab-${tab.id}`}
+              data-feature-tab={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={index === 0 ? "true" : "false"}
+              aria-controls={`feature-panel-${tab.id}`}
+              class:list={[
+                "relative pb-3 text-sm font-medium transition-colors duration-300",
+                index === 0 ? "text-foreground" : "text-muted-foreground hover:text-foreground",
+              ]}
+            >
+              {tab.label}
+              <span
+                data-feature-underline
+                class:list={[
+                  "absolute -bottom-[25px] left-0 h-px bg-signal transition-all duration-500",
+                  index === 0 ? "w-full" : "w-0",
+                ]}
+              />
+            </button>
+          ))
+        }
+      </div>
+    </div>
+
+    {
+      tabs.map((tab, index) => (
+        <div
+          id={`feature-panel-${tab.id}`}
+          data-feature-panel={tab.id}
+          role="tabpanel"
+          aria-labelledby={`feature-tab-${tab.id}`}
+          hidden={index !== 0}
+          class="mt-16 grid gap-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-center"
+        >
+          <div
+            class="reveal animate-in fade-in slide-in-from-bottom-4 duration-700"
+            data-visible="false"
+          >
+            <h3 class="max-w-lg text-[clamp(1.6rem,2.8vw,2.4rem)] font-bold leading-[1.1]">
+              {tab.heading}
+            </h3>
+            <p class="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">{tab.lead}</p>
+
+            <ul class="mt-12 space-y-8">
+              {tab.points.map(([title, body]) => (
+                <li class="group max-w-lg border-l border-border pl-5 transition-colors hover:border-signal">
+                  <div class="flex items-center gap-2.5">
+                    <CircleCheck class="h-4 w-4 shrink-0 text-signal" />
+                    <h4 class="text-[0.95rem] font-semibold">{title}</h4>
+                  </div>
+                  <p class="mt-2 text-sm leading-relaxed text-muted-foreground">{body}</p>
+                </li>
+              ))}
+            </ul>
+
+            <p class="eyebrow mt-12 !text-foreground/60">{tab.kicker}</p>
+          </div>
+
+          <div
+            class="reveal relative"
+            data-visible="false"
+            style="transition-delay: 120ms"
+          >
+            <div class="absolute -inset-6 bg-cyan/10 blur-[70px]" aria-hidden="true"></div>
+            <div class="relative border border-border bg-surface p-2 shadow-[var(--shadow-panel)]">
+              <img
+                src={dashboard.src}
+                alt="Dev Stream Labs build pipeline dashboard showing live build results"
+                width="1408"
+                height="1008"
+                loading="lazy"
+                class="w-full"
+              />
+            </div>
+            <div class="panel absolute -bottom-6 -left-4 hidden p-4 sm:block">
+              <p class="eyebrow">Live builds</p>
+              <p class="mt-1.5 font-display text-2xl font-bold">12 running</p>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  const featureTabs = document.querySelectorAll("[data-feature-tab]");
+  const featurePanels = document.querySelectorAll("[data-feature-panel]");
+
+  const activateFeature = (id = "") => {
+    for (const tab of featureTabs) {
+      if (!(tab instanceof HTMLButtonElement)) continue;
+      const active = tab.dataset.featureTab === id;
+      tab.setAttribute("aria-selected", String(active));
+      tab.classList.toggle("text-foreground", active);
+      tab.classList.toggle("text-muted-foreground", !active);
+      tab.classList.toggle("hover:text-foreground", !active);
+      const underline = tab.querySelector("[data-feature-underline]");
+      underline?.classList.toggle("w-full", active);
+      underline?.classList.toggle("w-0", !active);
+    }
+
+    for (const panel of featurePanels) {
+      if (!(panel instanceof HTMLElement)) continue;
+      const active = panel.dataset.featurePanel === id;
+      panel.hidden = !active;
+      if (active) {
+        const animated = panel.querySelector(".animate-in");
+        if (animated instanceof HTMLElement) {
+          animated.classList.remove("animate-in");
+          void animated.offsetWidth;
+          animated.classList.add("animate-in");
+        }
+      }
+    }
+  };
+
+  for (const tab of featureTabs) {
+    if (!(tab instanceof HTMLButtonElement)) continue;
+    tab.addEventListener("click", () => {
+      const id = tab.dataset.featureTab;
+      if (id) activateFeature(id);
+    });
+
+  }
+</script>

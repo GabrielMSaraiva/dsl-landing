@@ -1,0 +1,128 @@
+---
+import { ArrowRight, CircleCheck } from "@lucide/astro";
+
+const flow = [
+  ["Push code, builds just happen", "Every commit triggers builds across platforms automatically. No manual steps."],
+  ["AI tells you exactly what broke", "When a build fails, you get a clear root cause — not a wall of text."],
+  ["One commit, every platform", "Build for Windows, macOS, Linux and more from a single push."],
+  ["Full visibility from day one", "Track build trends, success rates, and commit activity in real time."],
+];
+
+const fields = [
+  { id: "name", label: "Full name", placeholder: "John Doe", type: "text" as const, required: true },
+  { id: "email", label: "Work email", placeholder: "john@company.com", type: "email" as const, required: true },
+  { id: "company", label: "Company", placeholder: "Company name", type: "text" as const, required: true },
+];
+---
+
+<section id="demo" class="relative border-t border-border/60">
+  <div class="pointer-events-none absolute inset-0 veil" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-[1400px] px-6 py-28 md:px-10 lg:py-40">
+    <div class="grid gap-16 lg:grid-cols-[1fr_0.95fr] lg:gap-24">
+      <div class="reveal" data-visible="false">
+        <p class="eyebrow !text-cyan">Schedule demo</p>
+        <h2 class="mt-5 text-[clamp(2rem,4.2vw,3.4rem)] font-bold leading-[1.02]">
+          See Dev Stream Labs in action
+        </h2>
+        <p class="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
+          Book a walkthrough and see how your team goes from code commit to built artifacts across every platform
+          — without manual intervention.
+        </p>
+
+        <h3 class="mt-16 text-xl font-semibold">From code push to build artifact, fully automated</h3>
+        <ul class="mt-8 space-y-7">
+          {
+            flow.map(([title, body], index) => (
+              <li class="flex gap-4">
+                <span class="mt-0.5 font-mono text-[0.65rem] text-signal">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <CircleCheck class="h-4 w-4 shrink-0 text-signal" />
+                    <h4 class="text-[0.95rem] font-semibold">{title}</h4>
+                  </div>
+                  <p class="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">{body}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="reveal" data-visible="false" style="transition-delay: 140ms">
+        <form data-demo-form class="panel p-7 shadow-[var(--shadow-panel)] lg:p-10">
+          <h3 class="text-2xl font-bold">Claim your personalized walkthrough</h3>
+
+          <div class="mt-8 space-y-px bg-border">
+            {
+              fields.map((field) => (
+                <div class="bg-background px-5 py-4 transition-colors focus-within:bg-surface">
+                  <label for={field.id} class="eyebrow !text-[0.6rem]">
+                    {field.label}
+                  </label>
+                  <input
+                    id={field.id}
+                    name={field.id}
+                    type={field.type}
+                    required={field.required}
+                    placeholder={field.placeholder}
+                    class="mt-1.5 w-full bg-transparent text-[0.95rem] outline-none placeholder:text-muted-foreground/60"
+                  />
+                </div>
+              ))
+            }
+            <div class="bg-background px-5 py-4 transition-colors focus-within:bg-surface">
+              <label for="message" class="eyebrow !text-[0.6rem]">Message (optional)</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="4"
+                placeholder="Tell us about your project or any questions you have…"
+                class="mt-1.5 w-full resize-none bg-transparent text-[0.95rem] outline-none placeholder:text-muted-foreground/60"></textarea>
+            </div>
+          </div>
+
+          <label class="mt-6 flex cursor-pointer items-start gap-3 text-xs leading-relaxed text-muted-foreground">
+            <input type="checkbox" class="mt-0.5 h-4 w-4 shrink-0 accent-[var(--signal)]" />
+            Subscribe for build automation tips, product updates, and early access to new features.
+          </label>
+
+          <button
+            data-demo-submit
+            type="submit"
+            class="group mt-8 flex w-full items-center justify-center gap-2 bg-signal py-4 text-sm font-semibold text-signal-foreground transition-all duration-300 hover:shadow-[0_0_40px_-6px_var(--signal)] disabled:opacity-70"
+          >
+            <span data-demo-submit-label>Book my walkthrough</span>
+            <ArrowRight class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const demoForm = document.querySelector("[data-demo-form]");
+  const demoSubmit = document.querySelector("[data-demo-submit]");
+  const demoSubmitLabel = document.querySelector("[data-demo-submit-label]");
+
+  if (
+    demoForm instanceof HTMLFormElement &&
+    demoSubmit instanceof HTMLButtonElement &&
+    demoSubmitLabel instanceof HTMLElement
+  ) {
+    demoForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      demoSubmit.disabled = true;
+      demoSubmitLabel.textContent = "Sending…";
+
+      window.setTimeout(() => {
+        demoSubmit.disabled = false;
+        demoSubmitLabel.textContent = "Book my walkthrough";
+        demoForm.reset();
+        window.dispatchEvent(new CustomEvent("demo:success"));
+      }, 700);
+    });
+  }
+</script>

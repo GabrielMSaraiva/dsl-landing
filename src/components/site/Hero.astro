@@ -1,0 +1,147 @@
+---
+import { ArrowUpRight, Play } from "@lucide/astro";
+import { Image } from "astro:assets";
+import heroImage from "../../assets/hero-dev-stream-labs.png";
+import soc2Badge from "../../assets/soc2-badge.png";
+
+const platforms = [
+  "Windows",
+  "macOS",
+  "Linux",
+  "Android",
+  "iOS",
+  "Unity",
+  "Unreal",
+  "CMake",
+  "GitHub",
+  "Perforce",
+  "Diversion",
+];
+---
+
+<section id="top" class="relative overflow-hidden pt-[72px]">
+  <div class="pointer-events-none absolute inset-0 veil" aria-hidden="true"></div>
+  <div
+    class="pointer-events-none absolute inset-0 grid-lines opacity-[0.35] [mask-image:radial-gradient(70%_60%_at_30%_30%,black,transparent)]"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="relative mx-auto grid max-w-[1400px] items-center gap-14 px-6 pb-24 pt-16 md:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:pb-36 lg:pt-24"
+  >
+    <div class="max-w-2xl">
+      <div class="mb-8 inline-flex items-center gap-3 border border-signal/30 bg-signal/[0.07] px-3.5 py-2">
+        <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-signal"></span>
+        <span class="eyebrow !text-signal">Automated DevOps for compiled codebases</span>
+      </div>
+
+      <h1 class="text-[clamp(2.75rem,6.4vw,5.25rem)] font-bold leading-[0.94]">
+        Stop losing days<br />
+        to broken builds.<br />
+        <span class="signal-text">Start shipping.</span>
+      </h1>
+
+      <p class="mt-8 max-w-md text-lg leading-relaxed text-muted-foreground">
+        Fewer failed builds. Fewer blockers. One pipeline that runs itself across every platform your team ships
+        to.
+      </p>
+
+      <div class="mt-11 flex flex-wrap items-center gap-3">
+        <a
+          href="#demo"
+          class="group inline-flex items-center gap-2 bg-signal px-7 py-4 text-sm font-semibold text-signal-foreground transition-all duration-300 hover:shadow-[0_0_40px_-6px_var(--signal)]"
+        >
+          Try it free
+          <ArrowUpRight
+            class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+          />
+        </a>
+        <a
+          href="#platform"
+          class="group inline-flex items-center gap-2.5 border border-border px-7 py-4 text-sm font-semibold transition-colors duration-300 hover:border-foreground/40 hover:bg-surface"
+        >
+          <Play class="h-3.5 w-3.5 fill-current text-signal" />
+          Watch build demo
+        </a>
+      </div>
+
+      <div class="mt-16 flex items-center gap-5 border-t border-border/70 pt-7">
+        <Image
+          src={soc2Badge}
+          alt="AICPA SOC for Service Organizations badge"
+          width={64}
+          height={64}
+          quality="max"
+          class="h-14 w-14 shrink-0"
+        />
+        <p class="eyebrow max-w-xs !leading-relaxed">
+          Built by veteran developers. Used by teams shipping at scale.
+        </p>
+      </div>
+    </div>
+
+    <div class="relative">
+      <div data-hero-gear class="relative float-slow">
+        <div class="absolute -inset-10 rounded-full bg-signal/10 blur-[80px]" aria-hidden="true"></div>
+        <Image
+          src={heroImage}
+          alt="Dev Stream Labs logo glowing above a reflective dark blue surface"
+          width={1096}
+          height={1096}
+          widths={[320, 480, 640, 828, 1096]}
+          sizes="(min-width: 1400px) 630px, (min-width: 1024px) 45vw, calc(100vw - 48px)"
+          quality="high"
+          fit="cover"
+          position="center"
+          priority
+          class="relative aspect-square w-full object-cover [mask-image:radial-gradient(72%_72%_at_50%_46%,black_58%,transparent)]"
+        />
+      </div>
+
+      <div class="panel absolute bottom-2 left-0 hidden w-56 p-4 sm:block">
+        <p class="eyebrow">Median build</p>
+        <p class="mt-2 font-display text-3xl font-bold">4m 12s</p>
+        <div class="mt-3 h-1 w-full bg-surface-2">
+          <div class="h-full w-[72%] bg-signal"></div>
+        </div>
+      </div>
+      <div class="panel absolute right-0 top-6 hidden p-4 lg:block">
+        <p class="eyebrow">Success rate</p>
+        <p class="mt-2 font-display text-3xl font-bold text-signal">99.2%</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="relative overflow-hidden border-y border-border/60 py-5">
+    <div class="marquee-track flex w-max gap-14 whitespace-nowrap">
+      {
+        [0, 1].map((duplicate) => (
+          <div class="flex gap-14" aria-hidden={duplicate === 1 ? "true" : undefined}>
+            {platforms.map((platform) => (
+              <span class="eyebrow flex items-center gap-14 !text-[0.7rem]">
+                {platform}
+                <span class="h-1 w-1 rounded-full bg-signal/60" />
+              </span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const heroGear = document.querySelector("[data-hero-gear]");
+  let heroRaf = 0;
+
+  const updateHeroParallax = () => {
+    cancelAnimationFrame(heroRaf);
+    heroRaf = requestAnimationFrame(() => {
+      if (heroGear instanceof HTMLElement) {
+        heroGear.style.transform = `translate3d(0, ${window.scrollY * -0.06}px, 0)`;
+      }
+    });
+  };
+
+  window.addEventListener("scroll", updateHeroParallax, { passive: true });
+</script>

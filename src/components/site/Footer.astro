@@ -1,0 +1,74 @@
+---
+import { MessagesSquare, Rss } from "@lucide/astro";
+import BrandIcon from "./BrandIcon.astro";
+import Wordmark from "./Wordmark.astro";
+
+const columns = [
+  { title: "Product", links: ["Features", "Integrations", "About Us", "Changelog", "Status"] },
+  { title: "Legal", links: ["Privacy Policy", "Cookie Policy", "Terms of Service"] },
+];
+
+const socials = [
+  { type: "lucide", icon: MessagesSquare },
+  { type: "lucide", icon: Rss },
+  { type: "brand", name: "youtube" },
+  { type: "brand", name: "instagram" },
+  { type: "brand", name: "linkedin" },
+] as const;
+---
+
+<footer id="about" class="relative border-t border-border/60">
+  <div class="mx-auto max-w-[1400px] px-6 pb-10 pt-24 md:px-10">
+    <p class="max-w-3xl text-[clamp(1.8rem,4vw,3.2rem)] font-bold leading-[1.05] tracking-tight">
+      The central hub for <span class="signal-text">high-performance teams.</span>
+    </p>
+
+    <div class="mt-20 grid gap-12 border-t border-border pt-12 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+        <Wordmark />
+        <p class="mt-6 max-w-xs text-sm leading-relaxed text-muted-foreground">
+          Automated DevOps for complex, compiled codebases. Built by veteran developers.
+        </p>
+        <div class="mt-8 flex gap-2">
+          {
+            socials.map((social) => {
+              const Icon = social.type === "lucide" ? social.icon : null;
+              const brandName = social.type === "brand" ? social.name : null;
+              return (
+                <a
+                  href="#top"
+                  aria-label="Social link"
+                  class="grid h-10 w-10 place-items-center border border-border text-muted-foreground transition-all duration-300 hover:border-signal/50 hover:text-signal"
+                >
+                  {Icon ? <Icon class="h-4 w-4" /> : brandName && <BrandIcon name={brandName} class="h-4 w-4" />}
+                </a>
+              );
+            })
+          }
+        </div>
+      </div>
+
+      {
+        columns.map((column) => (
+          <nav aria-label={column.title}>
+            <h3 class="text-sm font-semibold">{column.title}</h3>
+            <ul class="mt-5 space-y-3">
+              {column.links.map((link) => (
+                <li>
+                  <a href="#top" class="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))
+      }
+    </div>
+
+    <div class="mt-16 flex flex-col items-center justify-between gap-3 border-t border-border pt-8 sm:flex-row">
+      <p class="eyebrow !text-[0.65rem]">© 2026 Dev Stream Labs. All rights reserved.</p>
+      <p class="eyebrow !text-[0.65rem]">Built for teams shipping at scale</p>
+    </div>
+  </div>
+</footer>

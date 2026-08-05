@@ -1,0 +1,155 @@
+<ol
+  data-toast-region
+  dir="ltr"
+  tabindex="-1"
+  aria-label="Notifications"
+  class="toast-region"
+></ol>
+
+<template data-success-toast>
+  <li data-toast tabindex="0" class="toast-message" data-type="success">
+    <div class="toast-icon" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" height="20" width="20">
+        <path
+          fill-rule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
+          clip-rule="evenodd"></path>
+      </svg>
+    </div>
+    <div class="toast-content">
+      <div class="toast-title">Request received</div>
+      <div class="toast-description">Our team will reach out within one business day.</div>
+    </div>
+  </li>
+</template>
+
+<script>
+  const toastRegion = document.querySelector("[data-toast-region]");
+  const successToast = document.querySelector("[data-success-toast]");
+  let removalTimer = 0;
+
+  if (toastRegion instanceof HTMLOListElement && successToast instanceof HTMLTemplateElement) {
+    window.addEventListener("demo:success", () => {
+      window.clearTimeout(removalTimer);
+      toastRegion.replaceChildren(successToast.content.cloneNode(true));
+      const toast = toastRegion.querySelector("[data-toast]");
+
+      if (!(toast instanceof HTMLLIElement)) return;
+
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          toast.dataset.mounted = "true";
+        });
+      });
+
+      removalTimer = window.setTimeout(() => {
+        toast.dataset.removed = "true";
+        window.setTimeout(() => toast.remove(), 400);
+      }, 4000);
+    });
+  }
+</script>
+
+<style>
+  .toast-region {
+    --toast-width: 356px;
+    --toast-offset: 24px;
+    position: fixed;
+    right: var(--toast-offset);
+    bottom: var(--toast-offset);
+    z-index: 999999999;
+    width: var(--toast-width);
+    height: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+      "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  }
+
+  .toast-message {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    width: var(--toast-width);
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 16px;
+    color: rgb(23 23 23);
+    background: rgb(255 255 255);
+    border: 1px solid rgb(237 237 237);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+    opacity: 0;
+    transform: translateY(100%);
+    transition:
+      transform 400ms,
+      opacity 400ms,
+      height 400ms,
+      box-shadow 200ms;
+  }
+
+  .toast-message[data-mounted="true"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast-message[data-removed="true"] {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  .toast-icon {
+    position: relative;
+    display: flex;
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    align-items: center;
+    margin-right: 4px;
+    margin-left: -3px;
+  }
+
+  .toast-icon svg {
+    display: block;
+    margin-left: -1px;
+  }
+
+  .toast-content {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .toast-title {
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  .toast-description {
+    color: rgb(63 63 63);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+
+  @media (max-width: 600px) {
+    .toast-region {
+      --toast-offset: 16px;
+      --toast-width: calc(100vw - 32px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toast-message {
+      transition: none;
+    }
+  }
+</style>

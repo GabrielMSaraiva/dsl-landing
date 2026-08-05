@@ -1,0 +1,28 @@
+---
+interface Props {
+  name: string;
+  soon: boolean;
+  flowSide: "source" | "target";
+  flowIndex: number;
+}
+
+const { name, soon, flowSide, flowIndex } = Astro.props;
+---
+
+<div
+  data-integration-card
+  data-flow-side={flowSide}
+  data-flow-index={flowIndex}
+  class:list={[
+    "group relative flex h-[92px] flex-col items-center justify-center gap-1.5 border border-border bg-surface/40 px-3 text-center transition-all duration-400 hover:-translate-y-1 hover:border-signal/50 hover:bg-surface",
+    soon && "opacity-55",
+  ]}
+>
+  <span class="text-[0.78rem] font-semibold leading-tight">{name}</span>
+  {
+    soon && (
+      <span class="font-mono text-[0.55rem] uppercase tracking-[0.2em] text-muted-foreground">Soon</span>
+    )
+  }
+  <span class="absolute inset-x-0 bottom-0 h-px w-0 bg-signal transition-all duration-500 group-hover:w-full"></span>
+</div>

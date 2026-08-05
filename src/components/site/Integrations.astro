@@ -1,0 +1,94 @@
+---
+import IntegrationNode from "./IntegrationNode.astro";
+import IntegrationFlow from "./IntegrationFlow.astro";
+import brandLogo from "../../assets/dev-stream-labs-logo.png";
+
+const sources = [
+  { name: "Unity Engine", soon: false },
+  { name: "Unreal Engine", soon: true },
+  { name: "CMake", soon: true },
+  { name: "Visual Studio", soon: true },
+  { name: "Godot", soon: true },
+  { name: "GitHub", soon: false },
+  { name: "Diversion", soon: false },
+  { name: "Perforce", soon: true },
+];
+
+const targets = [
+  { name: "Windows", soon: false },
+  { name: "macOS", soon: false },
+  { name: "Linux", soon: false },
+  { name: "Android", soon: false },
+  { name: "iOS", soon: false },
+  { name: "Build Analytics", soon: false },
+  { name: "Slack", soon: true },
+  { name: "Consoles", soon: true },
+];
+---
+
+<section id="integrations" class="relative border-t border-border/60">
+  <div class="mx-auto max-w-[1400px] px-6 py-28 md:px-10 lg:py-40">
+    <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
+      <div class="reveal" data-visible="false">
+        <h2 class="max-w-xl text-[clamp(2rem,4.2vw,3.5rem)] font-bold leading-[1.02]">
+          Your entire tech stack,
+          <span class="block signal-text">finally in sync.</span>
+        </h2>
+        <p class="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
+          Stop wrestling with integrations. Dev Stream Labs unites your engines, pipelines, and tools into one
+          frictionless workflow.
+        </p>
+      </div>
+      <div class="reveal" data-visible="false" style="transition-delay: 120ms">
+        <p class="eyebrow lg:text-right">Launch in minutes, scale effortlessly</p>
+      </div>
+    </div>
+
+    <div
+      data-integration-stage
+      class="relative isolate mt-20 grid items-center gap-6 lg:grid-cols-[1fr_auto_1fr]"
+    >
+      <IntegrationFlow />
+
+      <div class="reveal relative z-10" data-visible="false">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
+          {
+            sources.map((source, index) => (
+              <IntegrationNode {...source} flowSide="source" flowIndex={index} />
+            ))
+          }
+        </div>
+      </div>
+
+      <div class="reveal relative z-10" data-visible="false" style="transition-delay: 150ms">
+        <div class="relative mx-auto grid h-40 w-40 place-items-center">
+          <span class="absolute inset-0 animate-pulse rounded-full bg-signal/15 blur-2xl"></span>
+          <div
+            data-integration-core
+            class="relative grid h-32 w-32 place-items-center border border-signal/50 bg-background shadow-[var(--shadow-glow)]"
+          >
+            <img
+              src={brandLogo.src}
+              alt=""
+              width="396"
+              height="96"
+              class="h-auto w-28"
+              aria-hidden="true"
+            />
+            <p class="eyebrow mt-3 !text-[0.55rem]">Core</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal relative z-10" data-visible="false" style="transition-delay: 250ms">
+        <div class="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
+          {
+            targets.map((target, index) => (
+              <IntegrationNode {...target} flowSide="target" flowIndex={index} />
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,126 @@
+---
+import { Menu, X } from "@lucide/astro";
+import Wordmark from "./Wordmark.astro";
+
+const links = [
+  { label: "Features", href: "#features" },
+  { label: "Integrations", href: "#integrations" },
+  { label: "Platform", href: "#platform" },
+  { label: "About", href: "#about" },
+];
+---
+
+<header
+  data-site-header
+  class="fixed inset-x-0 top-0 z-50 border-b border-transparent transition-all duration-500"
+>
+  <div class="mx-auto flex h-[72px] max-w-[1400px] items-center justify-between px-6 md:px-10">
+    <Wordmark />
+
+    <nav class="hidden items-center gap-9 md:flex" aria-label="Primary">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class="group relative text-[0.8rem] font-medium tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {link.label}
+            <span class="absolute -bottom-1.5 left-0 h-px w-0 bg-signal transition-all duration-400 group-hover:w-full" />
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a
+        href="#demo"
+        class="hidden bg-signal px-5 py-2.5 text-[0.8rem] font-semibold text-signal-foreground transition-all duration-300 hover:shadow-[0_0_28px_-4px_var(--signal)] sm:inline-flex"
+      >
+        Get Started
+      </a>
+      <button
+        data-menu-button
+        type="button"
+        aria-label="Open menu"
+        class="grid h-10 w-10 place-items-center border border-border text-foreground md:hidden"
+      >
+        <Menu data-menu-open-icon class="h-4 w-4" />
+        <X data-menu-close-icon class="hidden h-4 w-4" />
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="mobile-menu"
+    data-mobile-menu
+    class="max-h-0 overflow-hidden border-t-0 border-border bg-background/95 backdrop-blur-xl transition-all duration-400 md:hidden"
+  >
+    <nav class="flex flex-col px-6 py-4" aria-label="Mobile">
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            data-mobile-link
+            class="border-b border-border/60 py-3.5 font-display text-lg tracking-tight last:border-0"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <a
+        href="#demo"
+        data-mobile-link
+        class="mt-4 bg-signal px-5 py-3 text-center text-sm font-semibold text-signal-foreground"
+      >
+        Get Started
+      </a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector("[data-site-header]");
+  const menuButton = document.querySelector("[data-menu-button]");
+  const mobileMenu = document.querySelector("[data-mobile-menu]");
+  const openIcon = document.querySelector("[data-menu-open-icon]");
+  const closeIcon = document.querySelector("[data-menu-close-icon]");
+
+  const setMenuOpen = (open = false) => {
+    if (
+      !(menuButton instanceof HTMLButtonElement) ||
+      !(mobileMenu instanceof HTMLElement) ||
+      !(openIcon instanceof SVGElement) ||
+      !(closeIcon instanceof SVGElement)
+    ) return;
+    menuButton.dataset.open = String(open);
+    menuButton.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    mobileMenu.classList.toggle("max-h-0", !open);
+    mobileMenu.classList.toggle("border-t-0", !open);
+    mobileMenu.classList.toggle("max-h-80", open);
+    mobileMenu.classList.toggle("border-t", open);
+    openIcon.classList.toggle("hidden", open);
+    closeIcon.classList.toggle("hidden", !open);
+  };
+
+  const updateHeader = () => {
+    if (!(header instanceof HTMLElement)) return;
+    const scrolled = window.scrollY > 24;
+    header.classList.toggle("border-transparent", !scrolled);
+    header.classList.toggle("border-border/70", scrolled);
+    header.classList.toggle("bg-background/80", scrolled);
+    header.classList.toggle("backdrop-blur-xl", scrolled);
+  };
+
+  if (menuButton instanceof HTMLButtonElement) {
+    menuButton.addEventListener("click", () => {
+      setMenuOpen(menuButton.dataset.open !== "true");
+    });
+  }
+
+  for (const link of document.querySelectorAll("[data-mobile-link]")) {
+    link.addEventListener("click", () => setMenuOpen(false));
+  }
+
+  updateHeader();
+  window.addEventListener("scroll", updateHeader, { passive: true });
+</script>

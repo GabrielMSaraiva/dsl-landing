@@ -1,0 +1,24 @@
+---
+import logo from "../../assets/dev-stream-labs-logo.png";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<a
+  href="#top"
+  class:list={["inline-flex items-center", className]}
+  aria-label="Dev Stream Labs home"
+>
+  <img
+    src={logo.src}
+    alt=""
+    width="396"
+    height="96"
+    class="h-12 w-auto"
+    aria-hidden="true"
+  />
+</a>

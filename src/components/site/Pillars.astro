@@ -1,0 +1,74 @@
+---
+import { Activity, ArrowUpRight, ShieldCheck, Timer } from "@lucide/astro";
+
+const pillars = [
+  {
+    icon: ShieldCheck,
+    title: "Secure teams, projects, and access",
+    body: "Create organizations, manage teams, and control who can reach which projects — all from one place.",
+    cta: "See how orgs work",
+    index: "01",
+  },
+  {
+    icon: Timer,
+    title: "Set the schedule, forget the rest",
+    body: "Automatic builds that run on a cadence or on every commit. No babysitting, no manual triggers.",
+    cta: "Set it and forget it",
+    index: "02",
+  },
+  {
+    icon: Activity,
+    title: "Understand breakages instantly",
+    body: "Clear, human-readable explanations of what broke and what to do next — never a raw log dump.",
+    cta: "See failure analysis",
+    index: "03",
+  },
+];
+---
+
+<section class="relative mx-auto max-w-[1400px] px-6 py-28 md:px-10 lg:py-40">
+  <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
+    <div class="reveal" data-visible="false">
+      <h2 class="max-w-xl text-[clamp(2rem,4.2vw,3.5rem)] font-bold leading-[1.02]">
+        Stop babysitting your pipelines.
+        <span class="block text-muted-foreground">Let DevOps run itself.</span>
+      </h2>
+    </div>
+    <div class="reveal" data-visible="false" style="transition-delay: 120ms">
+      <p class="max-w-sm text-base leading-relaxed text-muted-foreground lg:ml-auto lg:text-right">
+        Turn painful processes into smooth workflows. Let your engineers focus on code, not configuration.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-20 grid gap-px border border-border bg-border md:grid-cols-3">
+    {
+      pillars.map((pillar, index) => {
+        const Icon = pillar.icon;
+        return (
+          <div class="reveal" data-visible="false" style={`transition-delay: ${index * 120}ms`}>
+            <article class="group relative flex h-full flex-col bg-background p-8 transition-colors duration-500 hover:bg-surface lg:p-10">
+              <div class="flex items-start justify-between">
+                <span class="grid h-11 w-11 place-items-center bg-signal text-signal-foreground transition-transform duration-500 group-hover:-rotate-6">
+                  <Icon class="h-5 w-5" />
+                </span>
+                <span class="font-mono text-xs text-muted-foreground/60">{pillar.index}</span>
+              </div>
+
+              <h3 class="mt-10 text-xl font-semibold leading-snug">{pillar.title}</h3>
+              <p class="mt-4 text-sm leading-relaxed text-muted-foreground">{pillar.body}</p>
+
+              <a
+                href="#demo"
+                class="mt-10 inline-flex items-center justify-between gap-4 border-t border-border pt-5 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground transition-colors group-hover:text-signal"
+              >
+                {pillar.cta}
+                <ArrowUpRight class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+              </a>
+            </article>
+          </div>
+        );
+      })
+    }
+  </div>
+</section>
