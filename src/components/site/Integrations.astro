@@ -1,6 +1,7 @@
 ---
 import IntegrationNode from "./IntegrationNode.astro";
 import IntegrationFlow from "./IntegrationFlow.astro";
+import { Image } from "astro:assets";
 import brandLogo from "../../assets/dev-stream-labs-logo.png";
 
 const sources = [
@@ -67,11 +68,14 @@ const targets = [
             data-integration-core
             class="relative grid h-32 w-32 place-items-center border border-signal/50 bg-background shadow-[var(--shadow-glow)]"
           >
-            <img
-              src={brandLogo.src}
+            <Image
+              src={brandLogo}
               alt=""
-              width="396"
-              height="96"
+              widths={[224, 396]}
+              sizes="112px"
+              format="webp"
+              quality={90}
+              loading="lazy"
               class="h-auto w-28"
               aria-hidden="true"
             />

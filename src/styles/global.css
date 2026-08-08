@@ -1,6 +1,5 @@
 @import "tailwindcss" source(none);
 @source "../**/*.{astro,html,js,mjs,ts,tsx}";
-@import "tw-animate-css";
 
 @font-face {
   font-family: "Manrope";
@@ -191,6 +190,18 @@
   background: color-mix(in oklab, var(--surface) 82%, transparent);
   border: 1px solid var(--border);
   backdrop-filter: blur(14px);
+}
+
+@keyframes feature-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1rem, 0);
+    filter: blur(0);
+  }
+}
+
+@utility feature-enter {
+  animation: feature-enter 700ms ease;
 }
 
 @keyframes drift {

@@ -1,5 +1,6 @@
 ---
 import { CircleCheck } from "@lucide/astro";
+import { Image } from "astro:assets";
 import dashboard from "../../assets/dashboard.jpg";
 
 const tabs = [
@@ -91,7 +92,7 @@ const tabs = [
           class="mt-16 grid gap-16 lg:grid-cols-[0.95fr_1.05fr] lg:items-center"
         >
           <div
-            class="reveal animate-in fade-in slide-in-from-bottom-4 duration-700"
+            class="reveal feature-enter"
             data-visible="false"
           >
             <h3 class="max-w-lg text-[clamp(1.6rem,2.8vw,2.4rem)] font-bold leading-[1.1]">
@@ -121,11 +122,13 @@ const tabs = [
           >
             <div class="absolute -inset-6 bg-cyan/10 blur-[70px]" aria-hidden="true"></div>
             <div class="relative border border-border bg-surface p-2 shadow-[var(--shadow-panel)]">
-              <img
-                src={dashboard.src}
+              <Image
+                src={dashboard}
                 alt="Dev Stream Labs build pipeline dashboard showing live build results"
-                width="1408"
-                height="1008"
+                widths={[384, 640, 960, 1408]}
+                sizes="(min-width: 1400px) 700px, (min-width: 1024px) calc(52vw - 64px), calc(100vw - 48px)"
+                format="webp"
+                quality="high"
                 loading="lazy"
                 class="w-full"
               />
@@ -163,11 +166,12 @@ const tabs = [
       const active = panel.dataset.featurePanel === id;
       panel.hidden = !active;
       if (active) {
-        const animated = panel.querySelector(".animate-in");
+        const animated = panel.querySelector(".feature-enter");
         if (animated instanceof HTMLElement) {
-          animated.classList.remove("animate-in");
-          void animated.offsetWidth;
-          animated.classList.add("animate-in");
+          for (const animation of animated.getAnimations()) {
+            animation.cancel();
+            animation.play();
+          }
         }
       }
     }

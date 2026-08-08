@@ -7,9 +7,10 @@ import spaceGroteskUrl from "../assets/fonts/space-grotesk-latin.woff2?url";
 interface Props {
   title: string;
   description: string;
+  preloadMono?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, preloadMono = true } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,7 +26,7 @@ const { title, description } = Astro.props;
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preload" href={manropeUrl} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={spaceGroteskUrl} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={jetBrainsMonoUrl} as="font" type="font/woff2" crossorigin />
+    {preloadMono && <link rel="preload" href={jetBrainsMonoUrl} as="font" type="font/woff2" crossorigin />}
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
@@ -33,20 +34,20 @@ const { title, description } = Astro.props;
 
     <script>
       const revealElements = document.querySelectorAll(".reveal");
-      const revealObserver = new IntersectionObserver(
-        (entries, observer) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) {
-              if (entry.target instanceof HTMLElement) entry.target.dataset.visible = "true";
-              observer.unobserve(entry.target);
+      if (revealElements.length > 0) {
+        const revealObserver = new IntersectionObserver(
+          (entries, observer) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                if (entry.target instanceof HTMLElement) entry.target.dataset.visible = "true";
+                observer.unobserve(entry.target);
+              }
             }
-          }
-        },
-        { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
-      );
+          },
+          { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+        );
 
-      for (const element of revealElements) {
-        revealObserver.observe(element);
+        for (const element of revealElements) revealObserver.observe(element);
       }
     </script>
   </body>

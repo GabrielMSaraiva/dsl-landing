@@ -71,6 +71,8 @@ const platforms = [
           alt="AICPA SOC for Service Organizations badge"
           width={64}
           height={64}
+          widths={[64, 96, 112]}
+          sizes="56px"
           quality="max"
           class="h-14 w-14 shrink-0"
         />
@@ -113,7 +115,7 @@ const platforms = [
   </div>
 
   <div class="relative overflow-hidden border-y border-border/60 py-5">
-    <div class="marquee-track flex w-max gap-14 whitespace-nowrap">
+    <div data-marquee-track class="marquee-track flex w-max gap-14 whitespace-nowrap">
       {
         [0, 1].map((duplicate) => (
           <div class="flex gap-14" aria-hidden={duplicate === 1 ? "true" : undefined}>
@@ -132,9 +134,12 @@ const platforms = [
 
 <script>
   const heroGear = document.querySelector("[data-hero-gear]");
+  const marqueeTrack = document.querySelector("[data-marquee-track]");
   let heroRaf = 0;
+  let trackingParallax = false;
 
   const updateHeroParallax = () => {
+    if (!trackingParallax && window.scrollY > window.innerHeight * 1.5) return;
     cancelAnimationFrame(heroRaf);
     heroRaf = requestAnimationFrame(() => {
       if (heroGear instanceof HTMLElement) {
@@ -143,5 +148,31 @@ const platforms = [
     });
   };
 
+  const setParallaxTracking = (active: boolean) => {
+    if (active === trackingParallax) return;
+    trackingParallax = active;
+    if (active) updateHeroParallax();
+    else cancelAnimationFrame(heroRaf);
+  };
+
   window.addEventListener("scroll", updateHeroParallax, { passive: true });
+
+  if ("IntersectionObserver" in window) {
+    const animationObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.target instanceof HTMLElement) {
+            entry.target.style.animationPlayState = entry.isIntersecting ? "running" : "paused";
+          }
+          if (entry.target === heroGear) setParallaxTracking(entry.isIntersecting);
+        }
+      },
+      { rootMargin: "120px 0px" },
+    );
+
+    if (heroGear instanceof HTMLElement) animationObserver.observe(heroGear);
+    if (marqueeTrack instanceof HTMLElement) animationObserver.observe(marqueeTrack);
+  } else {
+    setParallaxTracking(true);
+  }
 </script>

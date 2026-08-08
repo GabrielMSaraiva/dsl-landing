@@ -1,11 +1,13 @@
 ---
+import { Image } from "astro:assets";
 import logo from "../../assets/dev-stream-labs-logo.png";
 
 interface Props {
   class?: string;
+  loading?: "eager" | "lazy";
 }
 
-const { class: className = "" } = Astro.props;
+const { class: className = "", loading = "lazy" } = Astro.props;
 ---
 
 <a
@@ -13,11 +15,14 @@ const { class: className = "" } = Astro.props;
   class:list={["inline-flex items-center", className]}
   aria-label="Dev Stream Labs home"
 >
-  <img
-    src={logo.src}
+  <Image
+    src={logo}
     alt=""
-    width="396"
-    height="96"
+    widths={[224, 396]}
+    sizes="198px"
+    format="webp"
+    quality={90}
+    {loading}
     class="h-12 w-auto"
     aria-hidden="true"
   />
