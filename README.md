@@ -2,6 +2,8 @@
 
 Performance-focused, unofficial frontend recreation of the Dev Stream Labs marketing site. Built to preserve a polished, interactive experience while keeping client-side overhead low.
 
+**Live demo:** [dsl-landing-ten.vercel.app](https://dsl-landing-ten.vercel.app/)
+
 > [!IMPORTANT]
 > This is an independent educational project. I am not employed by, affiliated with, endorsed by, or commissioned by Dev Stream Labs. The Dev Stream Labs name, logo, brand assets, product copy, certifications, and product claims belong to their respective owners and are reproduced here only for study and demonstration.
 
